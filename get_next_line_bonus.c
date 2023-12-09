@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alaassir <alaassir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 04:35:35 by alaassir          #+#    #+#             */
-/*   Updated: 2023/12/08 15:23:58 by alaassir         ###   ########.fr       */
+/*   Updated: 2023/12/08 15:26:46 by alaassir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	check_nl(char *str)
 {
@@ -74,7 +74,7 @@ char	*get_the_line(int fd, char **next, char **line)
 
 	while (1)
 	{
-		buff = (char *)malloc((size_t)BUFFER_SIZE + 1);
+		buff = (char *)malloc(BUFFER_SIZE + 1);
 		if (!buff)
 			return (ft_free(line, NULL, NULL, 0));
 		get_rd = read(fd, buff, BUFFER_SIZE);
@@ -98,47 +98,29 @@ char	*get_the_line(int fd, char **next, char **line)
 
 char	*get_next_line(int fd)
 {
-	static char	*next_line;
+	static char	*next_line[OPEN_MAX];
 	char		*line;
 
 	line = "";
-	if (fd < 0 || BUFFER_SIZE < 1)
+	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE < 1)
 		return (NULL);
-	if (!next_line)
+	if (!next_line[fd])
 	{
-		next_line = (char *)malloc((size_t)BUFFER_SIZE + 1);
-		if (!next_line)
+		next_line[fd] = (char *)malloc((size_t)BUFFER_SIZE + 1);
+		if (!next_line[fd])
 			return (NULL);
-		next_line[0] = '\0';
+		next_line[fd][0] = '\0';
 	}
-	if (check_nl(next_line))
+	if (check_nl(next_line[fd]))
 	{
-		line = fill(next_line);
+		line = fill(next_line[fd]);
 		if (!line)
 			return (NULL);
-		get_rmn(next_line, &next_line, 0);
+		get_rmn(next_line[fd], &next_line[fd], 0);
 	}
-	else if (check_nl(next_line) == 0)
-		line = ft_last(fd, &next_line, &line);
+	else if (check_nl(next_line[fd]) == 0)
+		line = ft_last(fd, &next_line[fd], &line);
 	if (line && *line)
 		return (line);
-	return (ft_free(&line, NULL, NULL, 0), ft_free(NULL, &next_line, NULL, 1));
+	return (ft_free(&line, NULL, NULL, 0), ft_free(NULL, &next_line[fd], NULL, 1));
 }
-
-// #include <fcntl.h>
-// #include <limits.h>
-// #include <stdio.h>
-
-// int main()
-// {
-//     int fd = open("test.txt", O_RDONLY);
-//     char *str;
-//     while ((str = get_next_line(fd)))
-//     {
-//         printf("%s", str);
-//    		free(str);
-//     }
-//     free(str);
-//     close(fd);
-//     // system("leaks a.out");
-// }

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alaassir <alaassir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 04:54:58 by alaassir          #+#    #+#             */
-/*   Updated: 2023/12/08 15:29:29 by alaassir         ###   ########.fr       */
+/*   Updated: 2023/12/08 15:27:54 by alaassir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *str)
 {
@@ -81,7 +81,7 @@ void	get_rmn(char *dst, char **src, int check)
 
 char	*ft_free(char **line, char **next, char **buff, int check)
 {
-	if (check == 0 && *line)
+	if (check == 0)
 		return (free(*line), *line = NULL, NULL);
 	else if (check == 1 && *next)
 		return (free(*next), *next = NULL, NULL);
