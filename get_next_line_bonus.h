@@ -6,7 +6,7 @@
 /*   By: alaassir <alaassir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 04:35:02 by alaassir          #+#    #+#             */
-/*   Updated: 2023/12/08 09:10:48 by alaassir         ###   ########.fr       */
+/*   Updated: 2023/12/11 01:03:16 by alaassir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@
 
 char	*get_next_line(int fd);
 char	*fill(char *buff);
-void	get_rmn(char *dst, char **src, int check);
+void	get_rmn(char *dst, char *src, int check);
 size_t	ft_strlen(const char *str);
 char	*ft_free(char **line, char **next, char **buff, int check);
-char	*ft_last(int fd, char **next, char **line);
-char	*ft_strjoin(char **line, char *buff, int check);
-char	*get_the_line(int fd, char **next, char **line);
+char	*ft_last(int fd, char *next, char *line);
+char	*ft_strjoin(char *line, char *buff, int check);
+char	*get_the_line(int fd, char *next, char *line);
 
 #endif

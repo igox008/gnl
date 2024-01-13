@@ -6,7 +6,7 @@
 /*   By: alaassir <alaassir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 04:54:58 by alaassir          #+#    #+#             */
-/*   Updated: 2023/12/08 15:27:54 by alaassir         ###   ########.fr       */
+/*   Updated: 2023/12/11 01:01:45 by alaassir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char	*fill(char *buff)
 	return (dst);
 }
 
-void	get_rmn(char *dst, char **src, int check)
+void	get_rmn(char *dst, char *src, int check)
 {
 	ssize_t	i;
 	ssize_t	j;
@@ -60,13 +60,13 @@ void	get_rmn(char *dst, char **src, int check)
 	j = 0;
 	if (*src && dst)
 	{
-		while ((*src)[i] && (*src)[i] != '\n')
+		while (src[i] && src[i] != '\n')
 			i++;
-		if ((*src)[i] == '\n')
+		if (src[i] == '\n')
 			i++;
-		while ((*src)[i] && j < BUFFER_SIZE)
+		while (src[i] && j < BUFFER_SIZE)
 		{
-			dst[j] = (*src)[i];
+			dst[j] = src[i];
 			i++;
 			j++;
 		}
@@ -75,21 +75,21 @@ void	get_rmn(char *dst, char **src, int check)
 		else
 			dst[BUFFER_SIZE - 1] = '\0';
 		if (check == 1)
-			ft_free(NULL, NULL, src, 2);
+			ft_free(NULL, NULL, &src, 2);
 	}
 }
 
 char	*ft_free(char **line, char **next, char **buff, int check)
 {
-	if (check == 0)
+	if (check == 0 && *line)
 		return (free(*line), *line = NULL, NULL);
 	else if (check == 1 && *next)
 		return (free(*next), *next = NULL, NULL);
 	else if (check == 2)
 		return (free(*buff), *buff = NULL, NULL);
 	else if (check == 3)
-		return (free(*next), free(*line), next = NULL, \
-			free(*next), NULL);
+		return (free(*next), *next = NULL, free(*line), \
+			*line = NULL, NULL);
 	else if (check == 4)
 		return (free(*line), free(*buff), *line = NULL, \
 			*buff = NULL, NULL);
@@ -102,13 +102,13 @@ char	*ft_free(char **line, char **next, char **buff, int check)
 	return (NULL);
 }
 
-char	*ft_last(int fd, char **next, char **line)
+char	*ft_last(int fd, char *next, char *line)
 {
-	*line = ft_strjoin(line, *next, 0);
-	if (!*line)
+	line = ft_strjoin(line, next, 0);
+	if (!line)
 		return (NULL);
-	*line = get_the_line(fd, next, line);
-	if (!*line)
+	line = get_the_line(fd, next, line);
+	if (!line)
 		return (NULL);
-	return (*line);
+	return (line);
 }

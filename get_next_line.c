@@ -6,7 +6,7 @@
 /*   By: alaassir <alaassir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 04:35:35 by alaassir          #+#    #+#             */
-/*   Updated: 2023/12/08 15:23:58 by alaassir         ###   ########.fr       */
+/*   Updated: 2023/12/11 01:41:54 by alaassir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,7 @@ int	check_nl(char *str)
 	return (0);
 }
 
-char	*ft_null(char *s)
-{
-	char	*str;
-
-	str = (char *)malloc(1);
-	if (str == NULL)
-		return (NULL);
-	str[0] = s[0];
-	return (str);
-}
-
-char	*ft_strjoin(char **line, char *buff, int check)
+char	*ft_strjoin(char *line, char *buff, int check)
 {
 	int		i;
 	int		t;
@@ -48,26 +37,26 @@ char	*ft_strjoin(char **line, char *buff, int check)
 
 	i = 0;
 	j = 0;
-	if (!*line || !buff)
-		return (NULL);
-	t = ft_strlen(*line) + ft_strlen(buff);
+	if (!line || !buff)
+		return (ft_free(NULL, NULL, &buff, 2));
+	t = ft_strlen(line) + ft_strlen(buff);
 	new = (char *)malloc(t + 1);
 	if (new == NULL)
 		return (NULL);
-	while ((*line)[j])
-		new[i++] = (*line)[j++];
+	while (line[j])
+		new[i++] = line[j++];
 	j = 0;
 	while (buff[j])
 		new[i++] = buff[j++];
 	new[i] = '\0';
 	if (check == 0)
-		get_rmn(buff, &buff, 0);
+		get_rmn(buff, buff, 0);
 	if (check == 1)
-		ft_free(line, NULL, &buff, 4);
+		ft_free(&line, NULL, &buff, 4);
 	return (new);
 }
 
-char	*get_the_line(int fd, char **next, char **line)
+char	*get_the_line(int fd, char *next, char *line)
 {
 	ssize_t	get_rd;
 	char	*buff;
@@ -76,24 +65,24 @@ char	*get_the_line(int fd, char **next, char **line)
 	{
 		buff = (char *)malloc((size_t)BUFFER_SIZE + 1);
 		if (!buff)
-			return (ft_free(line, NULL, NULL, 0));
+			return (ft_free(&line, NULL, NULL, 0));
 		get_rd = read(fd, buff, BUFFER_SIZE);
 		if (get_rd == -1)
-			return (ft_free(line, NULL, &buff, 4));
+			return (ft_free(&line, NULL, &buff, 4));
 		if (get_rd == 0 && !ft_free(NULL, NULL, &buff, 2))
 			break ;
 		buff[get_rd] = '\0';
-		*line = ft_strjoin(line, fill(buff), 1);
-		if (check_nl(buff))
+		line = ft_strjoin(line, fill(buff), 1);
+		if (line && check_nl(buff))
 		{
-			get_rmn(*next, &buff, 1);
+			get_rmn(next, buff, 1);
 			break ;
 		}
 		ft_free(NULL, NULL, &buff, 2);
 	}
-	if (*line && *line[0])
-		return (*line);
-	return (ft_free(line, NULL, NULL, 0), NULL);
+	if (line && line[0])
+		return (line);
+	return (ft_free(&line, NULL, NULL, 0));
 }
 
 char	*get_next_line(int fd)
@@ -102,8 +91,8 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	line = "";
-	if (fd < 0 || BUFFER_SIZE < 1)
-		return (NULL);
+	if (fd < 0 || BUFFER_SIZE < 1 || read(fd, NULL, 0) < 0)
+		return (ft_free(NULL, &next_line, NULL, 1));
 	if (!next_line)
 	{
 		next_line = (char *)malloc((size_t)BUFFER_SIZE + 1);
@@ -116,29 +105,24 @@ char	*get_next_line(int fd)
 		line = fill(next_line);
 		if (!line)
 			return (NULL);
-		get_rmn(next_line, &next_line, 0);
+		get_rmn(next_line, next_line, 0);
 	}
 	else if (check_nl(next_line) == 0)
-		line = ft_last(fd, &next_line, &line);
-	if (line && *line)
+		line = ft_last(fd, next_line, line);
+	if (line && line[0])
 		return (line);
-	return (ft_free(&line, NULL, NULL, 0), ft_free(NULL, &next_line, NULL, 1));
+	return (ft_free(&line, &next_line, NULL, 3));
 }
-
 // #include <fcntl.h>
-// #include <limits.h>
 // #include <stdio.h>
-
 // int main()
 // {
-//     int fd = open("test.txt", O_RDONLY);
-//     char *str;
-//     while ((str = get_next_line(fd)))
-//     {
-//         printf("%s", str);
-//    		free(str);
-//     }
-//     free(str);
-//     close(fd);
-//     // system("leaks a.out");
+// 	int fd = open("test.txt", O_RDONLY);
+// 	char *str;
+// 	while ((str = get_next_line(fd)))
+// 	{
+// 		printf("%s", str);
+// 		free(str);
+// 	}
+// 	close(fd);
 // }
